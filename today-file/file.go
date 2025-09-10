@@ -57,8 +57,12 @@ func (d *dateInfo) getBasePath() string {
 	return path.Join(d.year, d.month)
 }
 
+func (d *dateInfo) getShortYear() string {
+	return strconv.Itoa(time.Now().Year() % 100)
+}
+
 func (d *dateInfo) getFilename() string {
-	return fmt.Sprintf("%s_%s_%s.md", d.month, d.day, d.year)
+	return fmt.Sprintf("%s_%s_%s.md", d.month, d.day, d.getShortYear())
 }
 
 func (d *dateInfo) getPath() string {
