@@ -90,19 +90,52 @@ func (d *dateInfo) openFile() ([]byte, error) {
 	return os.ReadFile(d.getPath())
 }
 
+func (d *dateInfo) openPreviousFile() ([]byte, error) {
+	contents, err := os.ReadFile(d.getPath())
+	if err == nil {
+		return contents, nil
+	}
+
+	entries, err := os.ReadDir(d.getBasePath())
+	if err != nil {
+		return nil, err
+	}
+	var mostRecentFilename os.FileInfo
+	for _, e := range entries {
+		if e.Type().IsDir() {
+			continue
+		}
+
+		entriePath := path.Join(d.getBasePath(), e.Name())
+		fi, err := os.Stat(entriePath)
+		if err != nil {
+			panic("error loading file when it should exist")
+		}
+
+		if mostRecentFilename == nil {
+			mostRecentFilename = fi
+			continue
+		}
+
+		if fi.ModTime().After(mostRecentFilename.ModTime()) {
+			mostRecentFilename = fi
+		}
+	}
+	return os.ReadFile(path.Join(d.getBasePath(), mostRecentFilename.Name()))
+}
+
 func (d *dateInfo) CreateFile() (*os.File, error) {
 	d.createFileDirectory()
 	return os.OpenFile(d.getPath(), os.O_RDWR|os.O_CREATE|os.O_TRUNC, 0o644)
 }
 
 func (d *dateInfo) readYesterdayFile() ([]string, error) {
-	yesterday := newYesterdayFile()
-	yesterdayFile, err := yesterday.openFile()
+	yesterdayFile, err := d.openPreviousFile()
 	if err != nil {
 		return nil, err
 	}
 
-	contents, err := yesterday.getContents(yesterdayFile)
+	contents, err := d.getContents(yesterdayFile)
 	if err != nil {
 		return nil, err
 	}
