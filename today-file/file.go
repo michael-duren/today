@@ -44,14 +44,14 @@ func NewTodayFile() TodayFile {
 	}
 }
 
-func newYesterdayFile() *dateInfo {
-	yesterday := time.Now().AddDate(0, 0, -1)
-	return &dateInfo{
-		year:  strconv.Itoa(yesterday.Year()),
-		month: prependZero(strconv.Itoa(int(yesterday.Month()))),
-		day:   prependZero(strconv.Itoa(yesterday.Day())),
-	}
-}
+// func newYesterdayFile() *dateInfo {
+// 	yesterday := time.Now().AddDate(0, 0, -1)
+// 	return &dateInfo{
+// 		year:  strconv.Itoa(yesterday.Year()),
+// 		month: prependZero(strconv.Itoa(int(yesterday.Month()))),
+// 		day:   prependZero(strconv.Itoa(yesterday.Day())),
+// 	}
+// }
 
 func (d *dateInfo) getBasePath() string {
 	return path.Join(d.year, d.month)
