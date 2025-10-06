@@ -20,11 +20,12 @@ func main() {
 	today := todayfile.NewTodayFile()
 	f, err := today.CreateFile()
 	if err != nil {
-		fmt.Println("unable to create file")
+		fmt.Println("unable to create file", err.Error())
+		return
 	}
 	err = today.UpdateContents(f)
 	if err != nil {
-		fmt.Println("unable to update file")
+		fmt.Println("unable to update file", err.Error())
 		return
 	}
 
