@@ -58,11 +58,11 @@ func (d *dateInfo) getBasePath() string {
 }
 
 func (d *dateInfo) getShortYear() string {
-	return strconv.Itoa(time.Now().Year() % 100)
+	return strconv.Itoa(time.Now().Year())
 }
 
 func (d *dateInfo) getFilename() string {
-	return fmt.Sprintf("%s_%s_%s.md", d.month, d.day, d.getShortYear())
+	return fmt.Sprintf("%s_%s_%s.md\n", d.month, d.day, d.getShortYear())
 }
 
 func (d *dateInfo) getPath() string {
@@ -84,10 +84,6 @@ func (d *dateInfo) createFileDirectory() error {
 
 func (d *dateInfo) getContents(b []byte) ([]string, error) {
 	return strings.Split(string(b), "\n"), nil
-}
-
-func (d *dateInfo) openFile() ([]byte, error) {
-	return os.ReadFile(d.getPath())
 }
 
 func (d *dateInfo) openPreviousFile() ([]byte, error) {
@@ -121,11 +117,18 @@ func (d *dateInfo) openPreviousFile() ([]byte, error) {
 			mostRecentFilename = fi
 		}
 	}
+
+	if mostRecentFilename == nil {
+		return nil, fmt.Errorf("unable to find most recent file")
+	}
+
 	return os.ReadFile(path.Join(d.getBasePath(), mostRecentFilename.Name()))
 }
 
 func (d *dateInfo) CreateFile() (*os.File, error) {
-	d.createFileDirectory()
+	if err := d.createFileDirectory(); err != nil {
+		return nil, err
+	}
 	return os.OpenFile(d.getPath(), os.O_RDWR|os.O_CREATE|os.O_TRUNC, 0o644)
 }
 
