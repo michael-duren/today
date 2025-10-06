@@ -5,7 +5,7 @@ import (
 	"errors"
 	"fmt"
 	"os"
-	"path"
+	"path/filepath"
 	"strconv"
 	"strings"
 	"time"
@@ -54,7 +54,7 @@ func NewTodayFile() TodayFile {
 // }
 
 func (d *dateInfo) getBasePath() string {
-	return path.Join(d.year, d.month)
+	return filepath.Join(d.year, d.month)
 }
 
 func (d *dateInfo) getShortYear() string {
@@ -66,7 +66,7 @@ func (d *dateInfo) getFilename() string {
 }
 
 func (d *dateInfo) getPath() string {
-	return path.Join(d.getBasePath(), d.getFilename())
+	return filepath.Join(d.getBasePath(), d.getFilename())
 }
 
 func (d *dateInfo) basePathExists() bool {
@@ -102,7 +102,7 @@ func (d *dateInfo) openPreviousFile() ([]byte, error) {
 			continue
 		}
 
-		entriePath := path.Join(d.getBasePath(), e.Name())
+		entriePath := filepath.Join(d.getBasePath(), e.Name())
 		fi, err := os.Stat(entriePath)
 		if err != nil {
 			panic("error loading file when it should exist")
@@ -122,7 +122,7 @@ func (d *dateInfo) openPreviousFile() ([]byte, error) {
 		return nil, fmt.Errorf("unable to find most recent file")
 	}
 
-	return os.ReadFile(path.Join(d.getBasePath(), mostRecentFilename.Name()))
+	return os.ReadFile(filepath.Join(d.getBasePath(), mostRecentFilename.Name()))
 }
 
 func (d *dateInfo) CreateFile() (*os.File, error) {
