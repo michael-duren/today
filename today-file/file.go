@@ -44,25 +44,20 @@ func NewTodayFile() TodayFile {
 	}
 }
 
-// func newYesterdayFile() *dateInfo {
-// 	yesterday := time.Now().AddDate(0, 0, -1)
-// 	return &dateInfo{
-// 		year:  strconv.Itoa(yesterday.Year()),
-// 		month: prependZero(strconv.Itoa(int(yesterday.Month()))),
-// 		day:   prependZero(strconv.Itoa(yesterday.Day())),
-// 	}
-// }
-
 func (d *dateInfo) getBasePath() string {
-	return filepath.Join(d.year, d.month)
+	cwd, err := os.Getwd()
+	if err != nil {
+		return filepath.Join(d.year, d.month)
+	}
+	return filepath.Join(cwd, d.year, d.month)
 }
 
 func (d *dateInfo) getShortYear() string {
-	return strconv.Itoa(time.Now().Year())
+	return strconv.Itoa(time.Now().Year() % 100)
 }
 
 func (d *dateInfo) getFilename() string {
-	return fmt.Sprintf("%s_%s_%s.md\n", d.month, d.day, d.getShortYear())
+	return fmt.Sprintf("%s_%s_%s.md", d.month, d.day, d.getShortYear())
 }
 
 func (d *dateInfo) getPath() string {
